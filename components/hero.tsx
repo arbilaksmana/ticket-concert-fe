@@ -1,10 +1,30 @@
+"use client";
+
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, MapPin, Calendar, Ticket } from "lucide-react";
+import { Search, ShieldCheck, Users, Ticket } from "lucide-react";
 import Image from "next/image";
 
 const Hero = () => {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/concerts?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push("/concerts");
+    }
+  };
+
+  const handleTrendingClick = (tag: string) => {
+    router.push(`/concerts?search=${encodeURIComponent(tag)}`);
+  };
+
   return (
     <div className="relative min-h-[600px] lg:min-h-[700px] w-full flex items-center justify-center overflow-hidden bg-black">
       {/* Background Image with Overlay */}
@@ -35,20 +55,26 @@ const Hero = () => {
         </p>
 
         {/* Search Bar Container */}
-        <div className="w-full max-w-3xl bg-white/10 backdrop-blur-xl border border-white/20 p-2 rounded-full shadow-2xl">
+        <form onSubmit={handleSearch} className="w-full max-w-3xl bg-white/10 backdrop-blur-xl border border-white/20 p-2 rounded-full shadow-2xl">
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-300" />
               <Input
                 placeholder="Cari artis, konser, atau venue..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="pl-12 h-14 w-full rounded-full bg-transparent border-transparent text-white placeholder:text-gray-400 focus-visible:ring-0 focus-visible:bg-white/5 transition-all text-base"
               />
             </div>
-            <Button size="lg" className="h-14 rounded-full px-8 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transition-all">
+            <Button
+              type="submit"
+              size="lg"
+              className="h-14 rounded-full px-8 text-base font-semibold bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg transition-all"
+            >
               Cari Tiket
             </Button>
           </div>
-        </div>
+        </form>
 
         {/* Stats / Quick Info */}
         <div className="mt-12 flex flex-wrap justify-center gap-6 sm:gap-12 text-white/90">
@@ -69,10 +95,11 @@ const Hero = () => {
         {/* Popular Tags */}
         <div className="mt-8 flex flex-wrap justify-center gap-2">
           <span className="text-sm text-gray-300 py-1">Sedang Tren:</span>
-          {['Sheila on 7', 'Coldplay', 'Java Jazz', 'DWP 2025'].map((tag) => (
+          {['Jazz Night', 'Rock Festival', 'Pop Concert', 'EDM Party'].map((tag) => (
             <Badge
               key={tag}
               variant="outline"
+              onClick={() => handleTrendingClick(tag)}
               className="text-white border-white/30 hover:bg-white/20 cursor-pointer transition-colors"
             >
               {tag}
@@ -83,7 +110,5 @@ const Hero = () => {
     </div>
   );
 };
-
-import { ShieldCheck, Users } from "lucide-react";
 
 export default Hero;

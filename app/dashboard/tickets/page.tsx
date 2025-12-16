@@ -10,7 +10,6 @@ import {
     Ticket,
     Calendar,
     MapPin,
-    QrCode,
     Loader2,
     TicketX,
     CheckCircle2,
@@ -20,6 +19,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/lib/auth-context";
 import { graphqlRequest, GET_USER_TICKETS, Ticket as TicketType } from "@/lib/graphql";
+import { QRCodeSVG } from "qrcode.react";
 
 function formatDate(dateString: string | null | undefined): string {
     if (!dateString) return "-";
@@ -218,8 +218,20 @@ export default function MyTicketsPage() {
 
                                                         {/* Right - QR Code Area */}
                                                         <div className="md:w-48 p-6 bg-muted/30 border-t md:border-t-0 md:border-l flex flex-col items-center justify-center">
-                                                            <div className="w-24 h-24 bg-white rounded-lg flex items-center justify-center mb-3 border">
-                                                                <QrCode className="w-16 h-16 text-gray-800" />
+                                                            <div className="w-28 h-28 bg-white rounded-lg flex items-center justify-center mb-3 border p-2">
+                                                                <QRCodeSVG
+                                                                    value={JSON.stringify({
+                                                                        code: ticket.code,
+                                                                        concert: ticket.concert.title,
+                                                                        type: ticket.ticketType.name,
+                                                                        venue: ticket.concert.venue,
+                                                                        date: ticket.concert.startAt,
+                                                                        status: ticket.status
+                                                                    })}
+                                                                    size={96}
+                                                                    level="M"
+                                                                    includeMargin={false}
+                                                                />
                                                             </div>
                                                             <p className="text-xs text-muted-foreground text-center font-mono">
                                                                 {ticket.code}
